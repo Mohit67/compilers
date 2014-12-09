@@ -285,9 +285,12 @@ using namespace llvm;
 	{
 		cout << cln_ << endl;
 	}
-	Value * char_literal_node::codegen_()
+	Value *char_literal_node::codegen_()
 	{
-		
+		int var_ = *cln_;
+		Value *ret = ConstantInt::get(getGlobalContext(), APInt(8,var_));
+		ret->dump();
+		return ret;
 	}
 	bool_literal_node::bool_literal_node(char *bln)
 	{
@@ -300,29 +303,16 @@ using namespace llvm;
 	}
 	Value * bool_literal_node::codegen_()
 	{
-		
+		int var_ = *bln_;
+		Value *ret = ConstantInt::get(getGlobalContext(), APInt(1,var_));
+		ret->dump();
+		return ret;
 	}
 	plus_node::plus_node(expr_node *l,expr_node *r)
-	{	
-		printf("plus_codegen\n");
+	{
 		left=l;
 		right=r;
 //		printf("in plus node\n");
-	}
-	Value* plus_node::codegen_()
-	{
-//		cout << "in plus_node codegen" << endl;
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-		
-//		cout << "printing LHS and RHS" << endl;
-//		L->dump();
-//		R->dump();
-
-		Value *ret = Builder.CreateAdd(L, R, "plustmp");
-		ret->dump();
-		return ret;
 	}
 	void plus_node::print_()
 	{
@@ -330,7 +320,6 @@ using namespace llvm;
 		cout << " + ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	minus_node::minus_node(expr_node *l,expr_node *r)
 	{
@@ -338,23 +327,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* minus_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateSub(L, R, "minustmp");
-		ret->dump();
-		return ret;
-	}	
 	void minus_node::print_()
 	{
 		left->print_();
 		cout << " - ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	mult_node::mult_node(expr_node *l,expr_node *r)
 	{
@@ -362,23 +340,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* mult_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateMul(L, R, "multtmp");
-		ret->dump();
-		return ret;
-	}	
 	void mult_node::print_()
 	{
 		left->print_();
 		cout << " * ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	div_node::div_node(expr_node *l,expr_node *r)
 	{
@@ -386,36 +353,19 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* div_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateSDiv(L, R, "divtmp");
-		ret->dump();
-		return ret;
-
-	}	
 	void div_node::print_()
 	{
 		left->print_();
 		cout << " / ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
-//Percent - Incomplete
 	percent_node::percent_node(expr_node *l,expr_node *r)
 	{
 		left=l;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* percent_node::codegen_()
-	{
-	
-	}	
 	void percent_node::print_()
 	{
 		left->print_();
@@ -429,24 +379,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* less_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_SLT, L, R, "lesstmp");
-		ret->dump();
-		return ret;
-
-	}	
 	void less_node::print_()
 	{
 		left->print_();
 		cout << " < ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	greater_node::greater_node(expr_node *l,expr_node *r)
 	{
@@ -454,23 +392,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* greater_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_SGT, L, R, "greatertmp");
-		ret->dump();
-		return ret;
-	}	
 	void greater_node::print_()
 	{
 		left->print_();
 		cout << " > ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	leq_node::leq_node(expr_node *l,expr_node *r)
 	{
@@ -478,23 +405,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* leq_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_SLE, L, R, "lesseqtmp");
-		ret->dump();
-		return ret;
-	}	
 	void leq_node::print_()
 	{
 		left->print_();
 		cout << " <= ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	geq_node::geq_node(expr_node *l,expr_node *r)
 	{
@@ -502,23 +418,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* geq_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_SGE, L, R, "greatereqtmp");
-		ret->dump();
-		return ret;
-	}	
 	void geq_node::print_()
 	{
 		left->print_();
 		cout << " >= ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	eqeq_node::eqeq_node(expr_node *l,expr_node *r)
 	{
@@ -526,23 +431,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* eqeq_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_EQ, L, R, "eqeqtmp");
-		ret->dump();
-		return ret;
-	}	
 	void eqeq_node::print_()
 	{
 		left->print_();
 		cout << " == ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	neq_node::neq_node(expr_node *l,expr_node *r)
 	{
@@ -550,23 +444,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* neq_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateICmp(CmpInst::ICMP_NE, L, R, "neqtmp");
-		ret->dump();
-		return ret;
-	}	
 	void neq_node::print_()
 	{
 		left->print_();
 		cout << " != ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	andand_node::andand_node(expr_node *l,expr_node *r)
 	{
@@ -574,23 +457,12 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* andand_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateAnd(L, R, "orortmp");
-		ret->dump();
-		return ret;
-	}	
 	void andand_node::print_()
 	{
 		left->print_();
 		cout << " && ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	oror_node::oror_node(expr_node *l,expr_node *r)
 	{
@@ -598,52 +470,28 @@ using namespace llvm;
 		right=r;
 //		printf("in plus node\n");
 	}
-	Value* oror_node::codegen_()
-	{
-		Value *L = left->codegen_();
-		Value *R = right->codegen_();
-		if (L == 0 || R == 0) return 0;
-
-		Value *ret = Builder.CreateOr(L, R, "orortmp");
-		ret->dump();
-		return ret;
-	}	
 	void oror_node::print_()
 	{
 		left->print_();
 		cout << " || ";
 		right->print_();
 		cout << endl;
-		codegen_();
 	}
 	void uminus_node::print_()
 	{
 		exprn_->print_();
 	//	cout << endl;
 	}
-	Value* uminus_node::codegen_()
-	{
-	‍‍‍
-	}	
 	void lognot_node::print_()
 	{
 		exprn_->print_();
 	//	cout << endl;
 	}
-	Value* lognot_node::codegen_()
-	{
-	
-	}	
 	void paren_node::print_()
 	{
 		exprn_->print_();
 	//	cout << endl;
-	}	
-	Value* paren_node::codegen_()
-	{
-	
-	}	
-
+	}
 
 	uminus_node::uminus_node(expr_node *exprn)
 	{
@@ -665,11 +513,6 @@ using namespace llvm;
 	{
 		//              printf("in expr_node\n");
 	}
-	Value* dummy_node::codegen_()
-	{
-	
-	}	
-
 	void dummy_node::print_()
 	{
 		//              printf("in expr_node\n");
@@ -718,10 +561,6 @@ using namespace llvm;
 		exprn_->print_();
 		cout << "]";
 	}
-	Value* location_node::codegen_()
-	{
-	
-	}	
 	method_call_node_1::method_call_node_1(char *id,list<expr_node *> *exprlst)
 	{
 		id_=id;
@@ -763,10 +602,6 @@ using namespace llvm;
 			cout << " ) " << endl;
 		}
 	}
-	Value* method_call_expr::codegen_()
-	{
-	
-	}	
 	callout_expr_arg_node::callout_expr_arg_node( expr_node *exprn)
 	{
 		exprn_ = exprn;
@@ -794,6 +629,12 @@ using namespace llvm;
 	{
 		cout << id_ << endl;
 	}
+	Value *field_node_single::codegen_()
+	{
+		AllocaInst *Alloca = Builder.CreateAlloca( Type::getInt32Ty(getGlobalContext()), 0, id_ );
+		Value *V = Alloca;
+		return Alloca;
+	}
 	field_node_array::field_node_array(char *id, int num)
 	{
 		id_ = id;
@@ -803,6 +644,10 @@ using namespace llvm;
 	void field_node_array::print_()
 	{
 		cout << id_ << "[" << num_ << "]" << endl;	
+	}
+	Value *field_node_array::codegen_()
+	{
+		
 	}
 	field::field(char *type, list<field_node *> *fdl)
 	{
@@ -815,7 +660,7 @@ using namespace llvm;
 		list<field_node *>::iterator itr;
 		for(itr=fdl_->begin(); itr!=fdl_->end(); ++itr)
 			(*itr)->print_();
-
+		codegen_();
 
 /*
 		itr=fdl_->begin();
@@ -840,7 +685,23 @@ using namespace llvm;
 //			}
 //		}	
 //		cout << endl;
-	}	
+	}
+	Value *field::codegen_()
+	{
+		list<field_node *>::iterator itr;
+		for(itr=fdl_->begin(); itr!=fdl_->end(); ++itr)
+		{
+//			cout << "field codegen_" << endl;
+//			cout << (*itr)->id_ << endl;
+
+			Value *temp = (*itr)->codegen_();
+			temp->dump();
+			return temp;
+			//AllocaInst *Alloca = Builder.CreateAlloca( Type::getInt32Ty(getGlobalContext()), 0, (*itr)->id_ );
+			//Value *V = Alloca;
+			//return Alloca;
+		}
+	}
 //	ast_node::ast_node(){}
 //int main()
 //{
