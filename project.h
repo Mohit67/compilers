@@ -444,6 +444,7 @@ class field_node
 		int num_;	
 		field_node();
 		virtual void print_()=0;
+		virtual Value *codegen_()=0;
 		void evaluate();
 };
 
@@ -454,6 +455,7 @@ class field_node_single : public field_node
 //		int num_;
 	public:
 		field_node_single(char *id);
+		Value *codegen_();
 		void print_();
 };
 
@@ -464,6 +466,7 @@ class field_node_array : public field_node
 //		int num_;
 	public:
 		field_node_array(char *id, int num);
+		Value *codegen_();
 		void print_();
 };
 
@@ -475,6 +478,7 @@ class field
 		list<field_node *> *fdl_;
 	public:
 		field(char *type, list<field_node *> *fdl);
+		Value *codegen_();
 		void print_();
 };
 

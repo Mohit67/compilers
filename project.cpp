@@ -287,7 +287,10 @@ using namespace llvm;
 	}
 	Value * char_literal_node::codegen_()
 	{
-		
+		int var_ = *cln_;
+		Value *ret = ConstantInt::get(getGlobalContext(), APInt(8,var_));
+		ret->dump();
+		return ret;
 	}
 	bool_literal_node::bool_literal_node(char *bln)
 	{
@@ -300,7 +303,10 @@ using namespace llvm;
 	}
 	Value * bool_literal_node::codegen_()
 	{
-		
+		int var_ = *bln_;
+		Value *ret = ConstantInt::get(getGlobalContext(), APInt(1,var_));
+		ret->dump();
+		return ret;
 	}
 	plus_node::plus_node(expr_node *l,expr_node *r)
 	{	
@@ -794,6 +800,12 @@ using namespace llvm;
 	{
 		cout << id_ << endl;
 	}
+	Value *field_node_single::codegen_()
+	{
+		AllocaInst *Alloca = Builder.CreateAlloca( Type::getInt32Ty(getGlobalContext()), 0, id_ );
+		Value *V = Alloca;
+		return Alloca;
+	}
 	field_node_array::field_node_array(char *id, int num)
 	{
 		id_ = id;
@@ -803,6 +815,10 @@ using namespace llvm;
 	void field_node_array::print_()
 	{
 		cout << id_ << "[" << num_ << "]" << endl;	
+	}
+	Value *field_node_array::codegen_()
+	{
+		
 	}
 	field::field(char *type, list<field_node *> *fdl)
 	{
@@ -816,6 +832,7 @@ using namespace llvm;
 		for(itr=fdl_->begin(); itr!=fdl_->end(); ++itr)
 			(*itr)->print_();
 
+		codegen_();
 
 /*
 		itr=fdl_->begin();
@@ -841,6 +858,22 @@ using namespace llvm;
 //		}	
 //		cout << endl;
 	}	
+	Value *field::codegen_()
+	{
+		list<field_node *>::iterator itr;
+		for(itr=fdl_->begin(); itr!=fdl_->end(); ++itr)
+		{
+//			cout << "field codegen_" << endl;
+//			cout << (*itr)->id_ << endl;
+
+			Value *temp = (*itr)->codegen_();
+			temp->dump();
+			return temp;
+			//AllocaInst *Alloca = Builder.CreateAlloca( Type::getInt32Ty(getGlobalContext()), 0, (*itr)->id_ );
+			//Value *V = Alloca;
+			//return Alloca;
+		}
+	}
 //	ast_node::ast_node(){}
 //int main()
 //{
