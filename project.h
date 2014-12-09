@@ -24,6 +24,7 @@ class expr_node
 	public:
 		expr_node();
 		virtual void print_()=0;
+		virtual Value* codegen_() = 0;
 };
 
 class dummy_node : public expr_node
@@ -31,6 +32,7 @@ class dummy_node : public expr_node
         public:
                 dummy_node();
                 void print_();
+		virtual Value* codegen_();
 };
 
 class plus_node : public expr_node
@@ -42,6 +44,7 @@ class plus_node : public expr_node
 	public:
 		plus_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 		
 };
 
@@ -54,7 +57,7 @@ class minus_node : public expr_node
 	public:
 		minus_node(expr_node *l,expr_node *r);
 		void print_();
-
+		virtual Value* codegen_();
 };
 
 class mult_node : public expr_node
@@ -66,6 +69,7 @@ class mult_node : public expr_node
 	public:
 		mult_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class div_node : public expr_node
@@ -77,6 +81,7 @@ class div_node : public expr_node
 	public:
 		div_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class percent_node : public expr_node
@@ -88,6 +93,7 @@ class percent_node : public expr_node
 	public:
 		percent_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class less_node : public expr_node
@@ -99,6 +105,7 @@ class less_node : public expr_node
 	public:
 		less_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class greater_node : public expr_node
@@ -110,6 +117,7 @@ class greater_node : public expr_node
 	public:
 		greater_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class geq_node : public expr_node
@@ -121,6 +129,7 @@ class geq_node : public expr_node
 	public:
 		geq_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class leq_node : public expr_node
@@ -132,6 +141,7 @@ class leq_node : public expr_node
 	public:
 		leq_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class eqeq_node : public expr_node
@@ -143,6 +153,7 @@ class eqeq_node : public expr_node
 	public:
 		eqeq_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class neq_node : public expr_node
@@ -154,6 +165,7 @@ class neq_node : public expr_node
 	public:
 		neq_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class andand_node : public expr_node
@@ -165,6 +177,7 @@ class andand_node : public expr_node
 	public:
 		andand_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class oror_node : public expr_node
@@ -176,6 +189,7 @@ class oror_node : public expr_node
 	public:
 		oror_node(expr_node *l,expr_node *r);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class uminus_node : public expr_node
@@ -185,6 +199,7 @@ class uminus_node : public expr_node
 	public:
 		uminus_node(expr_node *exprn);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class lognot_node : public expr_node
@@ -194,6 +209,7 @@ class lognot_node : public expr_node
 	public:
 		lognot_node(expr_node *exprn);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class paren_node : public expr_node
@@ -203,6 +219,7 @@ class paren_node : public expr_node
 	public:
 		paren_node(expr_node *exprn);
 		void print_();
+		virtual Value* codegen_();
 };
 
 // LITERAL NODES
@@ -212,7 +229,7 @@ class literal_node : public expr_node
 	public:
 		literal_node();
 		virtual void print_()=0;
-		virtual Value * codegen_()=0;
+//		virtual Value * codegen_()=0;
 };
 
 class int_literal_node : public literal_node
@@ -232,7 +249,7 @@ class char_literal_node : public literal_node
 	public:
 		char_literal_node(char *cln);
 		void print_();
-		Value *codegen_();
+		Value * codegen_();
 };
 
 class bool_literal_node : public literal_node
@@ -274,6 +291,7 @@ class location_node : public expr_node
 {
 	public:
 		virtual void print_()=0;
+		virtual Value* codegen_();
 };
 
 class location_node_single : public location_node
@@ -426,7 +444,6 @@ class field_node
 		int num_;	
 		field_node();
 		virtual void print_()=0;
-		virtual Value *codegen_()=0;
 		void evaluate();
 };
 
@@ -437,7 +454,6 @@ class field_node_single : public field_node
 //		int num_;
 	public:
 		field_node_single(char *id);
-		Value *codegen_();
 		void print_();
 };
 
@@ -448,7 +464,6 @@ class field_node_array : public field_node
 //		int num_;
 	public:
 		field_node_array(char *id, int num);
-		Value *codegen_();
 		void print_();
 };
 
@@ -460,7 +475,6 @@ class field
 		list<field_node *> *fdl_;
 	public:
 		field(char *type, list<field_node *> *fdl);
-		Value *codegen_();
 		void print_();
 };
 
@@ -531,6 +545,7 @@ class method_call_expr : public expr_node
 		method_call_node *medcalnod;
 		method_call_expr(method_call_node *medcalnod);
 		void print_();
+		virtual Value* codegen_();
 };
 
 class method_call_stmt : public statement_node
