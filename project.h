@@ -13,7 +13,7 @@
 using namespace std;
 using namespace llvm;
 
-static Module *TheModule;
+extern Module *TheModule;
 static IRBuilder<> Builder(getGlobalContext());
 static std::map<std::string, Value*> NamedValues;
 
@@ -434,6 +434,7 @@ class method_node
 	public:
 		method_node(char *type,char *id, list<arg_node *> *agl, block_node *blk);
 		void print_();
+		virtual Value *codegen_();
 
 };
 

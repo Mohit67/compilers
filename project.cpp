@@ -87,7 +87,42 @@ using namespace llvm;
 			cout << " ) " << endl;
 		}
 		blk_->print_();
-	}	
+		codegen_();
+	}
+
+	Value *method_node::codegen_()
+	{
+		// Look up the name in the global module table.
+		Function *CalleeF = TheModule->getFunction(id_);
+
+		if (CalleeF == 0)
+		{
+			cout << "unknown function" << endl;
+		    return 0;
+		}
+
+		// If argument mismatch error.
+/*		if (CalleeF->arg_size() != Args.size())
+		{
+			cout << "Incorrect number of arguments" << endl;
+		    return 0;
+		}
+*/		//    return ErrorV("Incorrect # arguments passed");
+
+		std::vector<Value*> ArgsV;
+
+//		list<arg_node *>::iterator atr;
+//		for(atr=agl_->begin(); atr!=agl_->end(); ++atr)
+//		{
+//			ArgsV.push_back((*atr)->codegen_());
+//		    if (ArgsV.back() == 0) return 0;
+//			Value *temp = (*atr)->codegen_();
+//			temp->dump();
+//		}
+
+		return Builder.CreateCall(CalleeF, ArgsV, "calltmp");	
+	}
+
 	arg_node::arg_node(char *type,char *id)
 	{
 		id_ = id;
@@ -411,6 +446,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 //Percent - Incomplete
 	percent_node::percent_node(expr_node *l,expr_node *r)
 	{
@@ -429,6 +465,7 @@ using namespace llvm;
 		right->print_();
 		cout << endl;
 	}
+
 	less_node::less_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -454,6 +491,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	greater_node::greater_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -478,6 +516,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	leq_node::leq_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -502,6 +541,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	geq_node::geq_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -526,6 +566,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	eqeq_node::eqeq_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -550,6 +591,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	neq_node::neq_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -574,6 +616,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	andand_node::andand_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -598,6 +641,7 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
 	oror_node::oror_node(expr_node *l,expr_node *r)
 	{
 		left=l;
@@ -622,6 +666,11 @@ using namespace llvm;
 		cout << endl;
 		codegen_();
 	}
+
+	uminus_node::uminus_node(expr_node *exprn)
+	{
+		exprn_ = exprn; 			/*unary minus to be printed*/
+	}
 	void uminus_node::print_()
 	{
 		exprn_->print_();
@@ -629,8 +678,16 @@ using namespace llvm;
 	}
 	Value* uminus_node::codegen_()
 	{
-	‍‍‍
+		Value *uval = (exprn_)->codegen_();
+    	Value *nval = Builder.CreateNeg(uval, "negative");
+    	nval->dump();
+    	return nval;
 	}	
+
+	lognot_node::lognot_node(expr_node *exprn)
+	{
+		exprn_ = exprn;
+	}
 	void lognot_node::print_()
 	{
 		exprn_->print_();
@@ -638,8 +695,16 @@ using namespace llvm;
 	}
 	Value* lognot_node::codegen_()
 	{
-	
+		Value *ex_val = (exprn_)->codegen_();
+    	Value *neg_val = Builder.CreateNot(ex_val, "lognot");
+    	neg_val->dump();
+    	return neg_val;
 	}	
+
+	paren_node::paren_node(expr_node *exprn)
+	{
+		exprn_ = exprn;
+	}
 	void paren_node::print_()
 	{
 		exprn_->print_();
@@ -647,26 +712,19 @@ using namespace llvm;
 	}	
 	Value* paren_node::codegen_()
 	{
-	
+		Value *ex1_val = (exprn_)->codegen_();
+		return ex1_val;
 	}	
 
-
-	uminus_node::uminus_node(expr_node *exprn)
-	{
-		exprn_ = exprn; 			/*unary minus to be printed*/
-	}
-	lognot_node::lognot_node(expr_node *exprn)
-	{
-		exprn_ = exprn;
-	}
-	paren_node::paren_node(expr_node *exprn)
-	{
-		exprn_ = exprn;
-	}
 	expr_node::expr_node()
 	{
 //		printf("in expr_node\n");
 	}
+	void expr_node::print_()
+	{
+		printf("in expr_node\n");
+	}
+
 	dummy_node::dummy_node()
 	{
 		//              printf("in expr_node\n");
@@ -675,15 +733,11 @@ using namespace llvm;
 	{
 	
 	}	
-
 	void dummy_node::print_()
 	{
 		//              printf("in expr_node\n");
 	}                                    
-	void expr_node::print_()
-	{
-		printf("in expr_node\n");
-	}
+
 	
 	else_block_node_1::else_block_node_1(char *els,block_node *blk)
 	{
@@ -857,7 +911,7 @@ using namespace llvm;
 //			}
 //		}	
 //		cout << endl;
-	}	
+	}
 	Value *field::codegen_()
 	{
 		list<field_node *>::iterator itr;

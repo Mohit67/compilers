@@ -17,6 +17,7 @@ int yylex();
 void yyerror (char const *s) {}
 
 program_node *root;
+Module *TheModule;
 %}
 
 %union
@@ -333,6 +334,8 @@ type: 		  INT_									{ $$ = $1;}
 int main()
 {
 		int a = yyparse();
+		LLVMContext &Context = getGlobalContext();
+		TheModule = new Module("Decaf Compiler", Context);
 
 //        if(a==0)
 //                printf("Syntactically Correct\n");
@@ -340,8 +343,6 @@ int main()
 //                printf("Syntactically Incorrect\n");
 	root->print_();
 
-		LLVMContext &Context = getGlobalContext();
-		TheModule = new Module("Decaf Compiler", Context);
         return 0;
 }
 
